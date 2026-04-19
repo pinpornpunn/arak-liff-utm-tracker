@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Redirecting...</title>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-B94E123XFC"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-B94E123XFC');
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111;
+      --border: #1e1e1e;
+      --accent: #06C755;
+      --accent-dim: rgba(6,199,85,0.12);
+      --text: #e8e8e8;
+      --muted: #555;
+      --font: 'IBM Plex Mono', monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(6,199,85,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6,199,85,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    .card {
+      width: min(420px, 92vw);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 40px 36px;
+      position: relative;
+    }
+
+    /* corner accents */
+    .card::before, .card::after {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      border-color: var(--accent);
+      border-style: solid;
+    }
+    .card::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .card::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+    .tag {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tag::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: blink 1.2s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; } 50% { opacity: 0.2; }
+    }
+
+    h1 {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .sub {
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 32px;
+      letter-spacing: 0.04em;
+    }
+
+    /* progress bar */
+    .bar-wrap {
+      height: 2px;
+      background: var(--border);
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+    .bar {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    /* log lines */
+    .log { display: flex; flex-direction: column; gap: 10px; }
+
+    .log-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 11px;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .log-line.show { opacity: 1; transform: none; }
+
+    .log-line .icon {
+      width: 14px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: var(--muted);
+    }
+    .log-line.done .icon { color: var(--accent); }
+    .log-line.active .icon { color: var(--accent); animation: blink 0.8s infinite; }
+
+    .log-line .label { color: var(--muted); flex: 1; }
+    .log-line.done  .label { color: var(--text); }
+    .log-line.active .label { color: var(--text); }
+
+    .log-line .val {
+      color: var(--accent);
+      font-size: 10px;
+      word-break: break-all;
+      text-align: right;
+      max-width: 160px;
+    }
+
+    .footer {
+      margin-top: 28px;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      border-top: 1px solid var(--border);
+      padding-top: 16px;
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="tag">utm tracker</div>
+  <h1>PROCESSING REQUEST</h1>
+  <p class="sub">กำลังบันทึก session และ redirect ไป LINE</p>
+
+  <div class="bar-wrap"><div class="bar" id="bar"></div></div>
+
+  <div class="log">
+    <div class="log-line" id="l1">
+      <span class="icon">○</span>
+      <span class="label">อ่าน UTM parameters</span>
+      <span class="val" id="v1">—</span>
+    </div>
+    <div class="log-line" id="l2">
+      <span class="icon">○</span>
+      <span class="label">ส่ง event ไป GA4</span>
+      <span class="val" id="v2">—</span>
+    </div>
+    <div class="log-line" id="l3">
+      <span class="icon">○</span>
+      <span class="label">บันทึก session</span>
+      <span class="val" id="v3">—</span>
+    </div>
+    <div class="log-line" id="l4">
+      <span class="icon">○</span>
+      <span class="label">redirect → LINE OA</span>
+      <span class="val" id="v4">—</span>
+    </div>
+  </div>
+
+  <div class="footer" id="footer">initializing...</div>
+</div>
+
+<script>
+  // ─── CONFIG ──────────────────────────────────────────
+  const LINE_OA_URL  = 'https://lin.ee/ZMQLEKZ';
+  const GA_ID        = 'G-B94E123XFC';
+  const REDIRECT_MS  = 2800; // หน่วง redirect (ms)
+  // ─────────────────────────────────────────────────────
+
+  const params  = new URLSearchParams(window.location.search);
+  const utmKeys = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
+
+  const utmData = {};
+  utmKeys.forEach(k => { if (params.get(k)) utmData[k] = params.get(k); });
+
+  // helpers
+  const bar    = document.getElementById('bar');
+  const footer = document.getElementById('footer');
+
+  function setBar(pct){ bar.style.width = pct + '%'; }
+
+  function activate(id){ 
+    const el = document.getElementById(id);
+    el.classList.add('show','active');
+    el.querySelector('.icon').textContent = '◉';
+  }
+  function done(id, val){
+    const el = document.getElementById(id);
+    el.classList.remove('active');
+    el.classList.add('done');
+    el.querySelector('.icon').textContent = '✓';
+    if(val) el.querySelector('.val').textContent = val;
+  }
+
+  // ─── SEQUENCE ─────────────────────────────────────────
+  setBar(0);
+
+  // step 1 – read utm
+  setTimeout(()=>{
+    activate('l1');
+    setBar(20);
+    const src = utmData.utm_source || '(none)';
+    const med = utmData.utm_medium || '(none)';
+    setTimeout(()=>{
+      done('l1', `${src} / ${med}`);
+      setBar(40);
+      footer.textContent = 'utm_source: ' + src;
+
+      // step 2 – send to GA4
+      setTimeout(()=>{
+        activate('l2');
+        const campaignVal = utmData.utm_campaign || '(none)';
+
+        if(typeof gtag !== 'undefined'){
+          // set campaign fields so GA4 attributes the session correctly
+          gtag('set', {
+            campaign_source:  utmData.utm_source   || '',
+            campaign_medium:  utmData.utm_medium   || '',
+            campaign_name:    utmData.utm_campaign || '',
+            campaign_content: utmData.utm_content  || '',
+            campaign_term:    utmData.utm_term     || ''
+          });
+
+          // fire page_view with utm dims
+          gtag('event', 'page_view', {
+            page_title:    'LIFF UTM Tracker',
+            page_location: window.location.href,
+            ...utmData
+          });
+
+          // fire custom event for LINE redirect
+          gtag('event', 'line_redirect', {
+            event_category: 'engagement',
+            event_label: utmData.utm_campaign || '(none)',
+            ...utmData
+          });
+        }
+
+        setTimeout(()=>{
+          done('l2', 'GA4 ✓ ' + campaignVal);
+          setBar(65);
+
+          // step 3 – log session
+          setTimeout(()=>{
+            activate('l3');
+            const ts = new Date().toISOString().replace('T',' ').slice(0,19);
+            setTimeout(()=>{
+              done('l3', ts);
+              setBar(85);
+              footer.textContent = 'session logged · ' + ts;
+
+              // step 4 – redirect
+              setTimeout(()=>{
+                activate('l4');
+                document.getElementById('v4').textContent = 'lin.ee/ZMQLEKZ';
+                setBar(100);
+
+                setTimeout(()=>{
+                  done('l4','redirecting...');
+                  footer.textContent = 'opening LINE OA...';
+
+                  // build final redirect URL (preserve utm on LINE OA side if supported)
+                  const destination = new URL(LINE_OA_URL);
+                  Object.entries(utmData).forEach(([k,v])=> destination.searchParams.set(k,v));
+                  window.location.href = destination.toString();
+                }, 400);
+
+              }, 350);
+            }, 450);
+          }, 300);
+        }, 500);
+      }, 350);
+    }, 400);
+  }, 300);
+</script>
+</body>
+</html>
